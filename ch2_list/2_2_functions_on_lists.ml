@@ -29,7 +29,11 @@ let rec sumProduct lst =
       in (x + s) , (x * p);;
 
     (* let - in syntax? *)
-    (* From Ocaml tutorial: The standard phrase let name = expression in is used to define a named local expression, and name can then be used later on in the function instead of expression, till a ;; which ends the block of code. Notice that we don't indent after the in. Just think of let ... in as if it were a statement. *)
+    (* From Ocaml tutorial: The standard phrase let name = expression in is 
+    used to define a named local expression, and name can then be used later 
+    on in the function instead of expression, till a ;; which ends the block 
+    of code. Notice that we don't indent after the in. Just think of let ... 
+    in as if it were a statement. *)
 
 (* 2.2.3 *)
 let rec doubler lst = 
@@ -50,4 +54,21 @@ let findNth (lst, n) =
     | [] -> -1
     | h::t when index = n -> h
     | _::t -> findNthRec t (index + 1)
-  in findNthRec lst 1 ;;
+  in findNthRec lst 1 ;; (* in operator calls the inner let block *))
+
+(* 2.2.6 *)
+let reverse lst =
+  let rec reverseRec (lst, reversed) =
+    match lst with
+    | [] -> reversed
+    | h::t -> reverseRec (t, h::reversed)
+  in reverseRec (lst, []) ;;
+
+(*2.2.8*)
+let digify nonNegInt = 
+  let rec digifyRec (nonNegInt, listOfDigits) = 
+    match nonNegInt / 10 with
+    | 0 -> listOfDigits::(nonNegInt mod 10)
+    | n -> digifyRec (n, listOfDigits::(nonNegInt mod 10))
+  in digifyRec (nonNegInt, []) ;;
+  (* actually, it is just as easy to not reverse *)
