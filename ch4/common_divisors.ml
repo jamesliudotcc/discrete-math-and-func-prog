@@ -9,3 +9,13 @@ let common_divisors a b =
 (* Do the recursive common divisor finding from smaller of a or b.
 The purpose of the let block is to apply the recursive function
 The purpose of the in is to do the choosing of the smaller of a or b.*)
+
+
+let rec greatest l =
+  match l with
+  | [n] -> n
+  | head::rest -> let z = greatest rest
+                  in if head > z then head else z
+
+
+let gcd a b = common_divisors a b |> greatest
