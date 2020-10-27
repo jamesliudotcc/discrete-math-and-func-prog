@@ -5,7 +5,7 @@ let x_to_y_power x y =
     | a, b, n -> a * b * a_to_b_power a b (n - 1)
   in a_to_b_power 1 x y
 
-let x_to_y_power x y =
+let exp_fast x y =
   let rec a_times_b_to_n a b n =
     match a, b, n with
     | a, b, 0 -> a
