@@ -22,3 +22,33 @@ let rec nodes x =
   | Leaf(x) -> 1
   | Internal(x, left, right) ->
      1 + nodes left + nodes right
+
+let rec max t =
+  match t with
+  | Leaf(t) -> t
+  | Internal(t, left, right) ->
+     if t > max left && t > max right
+     then t
+     else
+       if max left > max right
+       then max left
+       else max right
+
+let rec min t =
+  match t with
+  | Leaf(t) -> t
+  | Internal(t, left, right) ->
+     if t < min left && t < min right
+     then t
+     else
+       if min left < min right
+       then min left
+       else min right
+
+let rec is_in_order t =
+  match t with
+  | Leaf(t) -> true
+  | Internal(t, left, right) ->
+     if is_in_order left && is_in_order right
+     then max left <= t && t <= min right
+     else false
