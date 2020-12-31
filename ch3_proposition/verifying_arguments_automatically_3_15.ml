@@ -32,3 +32,27 @@ let rec display argument =
                                     then display(q)
                                     else "(" ^ display(q) ^ ")"
       | _ -> display(q))
+
+exception EmptyBigConjOrDisj
+
+let rec big_conj propositions =
+  match propositions with
+  | [] -> raise EmptyBigConjOrDisj
+  | [p] -> p
+  | p :: rest -> conj(p, big_conj rest)
+
+let rec big_disj propositions =
+  match propositions with
+  | [] -> raise EmptyBigConjOrDisj
+  | [p] -> p
+  | p :: rest -> disj(p, big_disj rest)
+
+                     (* Example *)
+
+let orig = cond(big_conj([
+                      cond(Var("t"), Var("u")); (* Careful, lists are delmited with ;*)
+                      disj(Var("p"), Negative(Var("q")));
+                      cond(Var("p"), cond(Var("u"), Var("r")));
+                      Var("q")
+                  ]), (* Tuples with ,*)
+                cond(Var("t"), Var("r")))
