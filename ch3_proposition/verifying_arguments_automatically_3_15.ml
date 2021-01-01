@@ -47,7 +47,7 @@ let rec big_disj propositions =
   | [p] -> p
   | p :: rest -> disj(p, big_disj rest)
 
-                     (* Example *)
+(* Example *)
 
 let orig = cond(big_conj([
                       cond(Var("t"), Var("u")); (* Careful, lists are delmited with ;*)
@@ -56,3 +56,69 @@ let orig = cond(big_conj([
                       Var("q")
                   ]), (* Tuples with ,*)
                 cond(Var("t"), Var("r")))
+
+
+let flip operation =
+  match operation with
+  | Conjunction -> Disjunction
+  | Disjunction -> Conjunction
+
+
+                 (* Warning is fine, read it you can see it is ok*)
+let rec negation_normal_form argument =
+  match argument with
+  | Var(s) -> Var(s)
+  | Negative(Var(s)) -> Negative(Var(s))
+  | Negative(Negative(Var(p))) -> negation_normal_form(Var(p))
+  | Negative(BinaryOper(oper, p, q)) ->
+     BinaryOper(flip(oper),
+                negation_normal_form(Negative(p)),
+                negation_normal_form(Negative(q)))
+  | BinaryOper(oper, p, q) -> BinaryOper(oper, negation_normal_form(p), negation_normal_form(q))
+;;
+
+(* Try this on the example*)
+orig |> negation_normal_form |> display
+;;
+
+let rec distribute argument =
+  match argument with
+  | (p, BinaryOper(Conjunction, q, r)) ->
+     BinaryOper(Conjunction, distribute(p, q), distribute(p, r))
+  | (BinaryOper(Conjunction, p, q), r) ->
+     BinaryOper(Conjunction, distribute(p, r), distribute(q, r))
+  | (p, q) -> BinaryOper(Disjunction, p, q)
+
+exception NotInNNF of string
+
+let rec conjunctive_normal_form argument =
+  match argument with
+  | Var(s) -> Var(s)
+  | Negative(Var(s)) -> Negative(Var(s))
+  | Negative(p) -> raise (NotInNNF(display(p)))
+  | BinaryOper(Conjunction, p, q) ->
+     BinaryOper(Conjunction, conjunctive_normal_form(p), conjunctive_normal_form(q))
+  | BinaryOper(Disjunction, p, q) ->
+     distribute(conjunctive_normal_form p, conjunctive_normal_form q)
+
+;;
+
+(* example *)
+
+orig |> negation_normal_form |> conjunctive_normal_form |> display
+
+exception NotInCNF of string
+
+let rec positives arguments =
+  match arguments with
+  | Var(s) -> [s]
+  | Negative(Var(s)) -> []
+  | BinaryOper(Disjunction, p, q) -> positives p @ positives q
+  | x -> raise (NotInCNF(display(x)))
+
+let rec negatives arguments =
+  match arguments with
+  | Var(s) -> []
+  | Negative(Var(s)) -> []
+  | BinaryOper(Disjunction, p, q) -> negatives p @ negatives q
+  | x -> raise (NotInCNF(display(x)))
