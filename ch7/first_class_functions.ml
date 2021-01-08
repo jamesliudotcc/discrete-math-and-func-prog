@@ -45,3 +45,11 @@ let make_list_extractor xx =
     | (a :: rest, x) -> find_nth (rest, x - 1)
   in
   fun x -> find_nth (xx, x)
+
+let make_list_mul x =
+  let rec list_mul l =
+    match l with
+    | [] -> []
+    | a :: rest -> a * x :: list_mul rest
+  in
+  list_mul
