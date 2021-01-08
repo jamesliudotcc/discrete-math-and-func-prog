@@ -53,3 +53,16 @@ let make_list_mul x =
     | a :: rest -> a * x :: list_mul rest
   in
   list_mul
+
+let rec filter fn l =
+  match l with
+  | [] -> []
+  | a :: rest ->
+     if fn a
+     then a :: filter fn rest
+     else filter fn rest
+;;
+
+(* Example with anonymous function*)
+
+filter (fun x -> x mod 2 = 0) [3;4;5];;
