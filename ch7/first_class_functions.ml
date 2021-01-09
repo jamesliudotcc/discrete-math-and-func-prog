@@ -66,3 +66,16 @@ let rec filter fn l =
 (* Example with anonymous function*)
 
 filter (fun x -> x mod 2 = 0) [3;4;5];;
+
+type tree = Leaf of int | Internal of (int * tree * tree)
+
+let rec transform_tree fn t =
+  match t with
+  | Leaf(t) -> Leaf(fn t)
+  | Internal(t, left, right) ->
+     Internal(fn t, (transform_tree fn left), (transform_tree fn right))
+;;
+
+(*Example*)
+
+transform_tree (fun x -> x * 2) (Internal(1, Leaf(2), Leaf(3)))
