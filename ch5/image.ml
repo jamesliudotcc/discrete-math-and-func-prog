@@ -13,3 +13,10 @@ let add_image (elem, set) =
       | [] -> []
       | head::tail -> (elem, head)::process_set(tail)
     in process_set set
+
+let composition (r, s) =
+  let rec do_composition pairs =
+    match pairs with
+    | [] -> []
+    | (a, b)::tail -> add_image (a, image (b, s)) @ do_composition tail
+  in do_composition r
